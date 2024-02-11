@@ -1,0 +1,23 @@
+﻿@page "/"
+@inject IJSRuntime JSRuntime
+
+
+<h1>Blazor Webcam</h1>
+<video id="videoFeed" width="320" height="240" /><canvas class="d-none" id="currentFrame" width="320" height="240" /><br />
+<MudButton @onclick="StartVideo" Variant="Variant.Filled" Color="Color.Primary">Başlat</MudButton>
+<MudButton @onclick="StopVideo" Variant="Variant.Filled" Color="Color.Secondary">Bitir</MudButton>
+
+
+@code {
+    
+    private async Task StartVideo()
+    {
+        await JSRuntime.InvokeVoidAsync("startVideo", "videoFeed");
+        await JSRuntime.InvokeVoidAsync("getPose", "videoFeed");
+    }
+    
+    private async Task StopVideo()
+    {
+        await JSRuntime.InvokeVoidAsync("stopVideo", "videoFeed");
+    }
+}
