@@ -2,25 +2,24 @@
 
 // Ana işlem
 async function run() {
-    
-    const canvas = document.getElementById('overlay');
-    // Kullanıcıdan kamera izni iste ve başlat
-    try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-            audio: false
-            video: {
-                height: 240,
-                width: 320,
-                facingMode : 'user',
-            }
-        });
-        const video = document.getElementById('video');
-        video.srcObject = stream;
-        video = await new Promise((resolve, reject) => {
-            video.onloadedmetadata = () => resolve(videoElement);
-        });
-        video.play();
 
+    const canvas = document.getElementById('overlay');
+
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        const video = document.getElementById('video');
+        video.width = 320;
+        video.heigh = 240;
+
+        video.srcObject = stream;
+        video.onloadedmetadata = async () => {
+            video.play();
+            if (detector == null) {
+                detector = await poseDetection.createDetector(poseDetection.SupportedModels.MoveNet);
+            }
+            const poses = await detector.estimatePoses(video);
+            const keypoints = poses[0].keypoints;
+        };
     } catch (err) {
         console.error("Kamera erişiminde hata:", err);
     }
