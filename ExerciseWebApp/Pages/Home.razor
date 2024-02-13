@@ -3,22 +3,21 @@
 
 
 <h1>Blazor Webcam</h1>
-<video id="videoElement" width="320" height="240" />
-<canvas class="d-none" id="currentFrame" width="320" height="240" />
+<video id="video" width="320" height="240" />
+<canvas id="overlay" width="320" height="240" />
 <br />
 <MudButton @onclick="StartVideo" Variant="Variant.Filled" Color="Color.Primary">Başlat</MudButton>
-<MudButton @onclick="StopVideo" Variant="Variant.Filled" Color="Color.Secondary">Bitir</MudButton>
+<MudButton  Variant="Variant.Filled" Color="Color.Secondary">Bitir</MudButton>
+<MudText>@JsonSerializer.Serialize(posesJson)</MudText>
 
 
 @code {
 
+    private string posesJson = "";
+
     private async Task StartVideo()
     {
-        await JSRuntime.InvokeVoidAsync("startVideo", "videoElement");
-    }
-
-    private async Task StopVideo()
-    {
-        await JSRuntime.InvokeVoidAsync("stopVideo", "videoElement");
+        var poses = await JSRuntime.InvokeAsync<object[]>("run");
+        posesJson = System.Text.Json.JsonSerializer.Serialize(poses);
     }
 }
