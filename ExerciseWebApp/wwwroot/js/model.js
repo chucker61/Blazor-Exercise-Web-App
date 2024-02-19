@@ -28,14 +28,14 @@ async function estimatePose() {
 
     async function poseDetectionFrame() {
         const result = await detector.estimatePoses(video);
-        console.log(result);
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
         drawKeypoints(result,0.2);
         requestAnimationFrame(poseDetectionFrame);
+        return result;
     }
 
-    poseDetectionFrame();
+    return poseDetectionFrame();
 }
 
 function drawKeypoints(result, minPoseScore) {

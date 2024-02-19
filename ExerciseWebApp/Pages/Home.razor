@@ -1,25 +1,25 @@
 ﻿@page "/"
-@inject IJSRuntime JSRuntime
+@inject IDialogService DialogService
 
+<MudGrid Class="align-center">
+    <WorkoutItemComponent WorkoutName="deneme1" Difficulty="90"/>
+    <WorkoutItemComponent WorkoutName="deneme2" Difficulty="43"/>
+    <WorkoutItemComponent WorkoutName="deneme3" Difficulty="76"/>
+    <WorkoutItemComponent WorkoutName="deneme4" Difficulty="42"/>
+    <WorkoutItemComponent WorkoutName="deneme5" Difficulty="12"/>
+    <WorkoutItemComponent WorkoutName="deneme6" Difficulty="45"/>
+    <WorkoutItemComponent WorkoutName="deneme7" Difficulty="50"/>
+    <WorkoutItemComponent WorkoutName="deneme8" Difficulty="75"/>
+    <WorkoutItemComponent WorkoutName="deneme9" Difficulty="25"/>
+    <WorkoutItemComponent WorkoutName="deneme10" Difficulty="34"/>
+    <MudItem md="2" sm="4" xs="6">
+        <MudFab OnClick="@OpenDialog" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" />
+    </MudItem>
+</MudGrid>
 
-<h1>Blazor Webcam</h1>
-<video id="video" width="640" height="480" />
-<canvas id="overlay" width="640" height="480" />
-<br />
-<MudButton @onclick="StartVideo" Variant="Variant.Filled" Color="Color.Primary">Başlat</MudButton>
-<MudButton @onclick="StopVideo" Variant="Variant.Filled" Color="Color.Secondary">Bitir</MudButton>
-<MudText></MudText>
-
-
-@code {
-
-    private async Task StartVideo()
+@code{
+    private void OpenDialog()
     {
-        await JSRuntime.InvokeVoidAsync("estimatePose");
-    }
-
-    private void StopVideo()
-    {
-        JSRuntime.InvokeVoidAsync("stopVideo");
+        DialogService.Show<CreateWorkoutDialogComponent>();
     }
 }

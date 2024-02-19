@@ -1,0 +1,27 @@
+﻿<MudStack Spacing="10" Class="pa-8">
+    <MudText Typo="Typo.h6">
+        <MudIcon Icon="@Icons.Material.Filled.Add" Class="mb-n2"></MudIcon>
+        Create Workout
+    </MudText>
+
+    <MudTextField @bind-Value="TextValue" Label="WorkoutName" Variant="Variant.Outlined"></MudTextField>
+
+    <div>
+        <MudText Typo="Typo.body1">
+            <MudIcon Icon="@Icons.Material.Filled.Sports" Class="mb-n1"></MudIcon>
+            Exercises
+        </MudText>
+
+        <ExerciseItemComponent/>
+        <ExerciseItemComponent/>
+        <ExerciseItemComponent/>
+        <ExerciseItemComponent/>
+        <ExerciseItemComponent/>
+    </div>
+
+</MudStack>
+
+@code {
+    public bool Basic_CheckBox1 { get; set; } = true;
+    public string TextValue { get; set; }
+}
