@@ -1,27 +1,67 @@
-﻿<MudStack Spacing="10" Class="pa-8">
+﻿@inject NavigationManager _navigationManager;
+
+<MudStack Spacing="10" Class="pa-8">
     <MudText Typo="Typo.h6">
         <MudIcon Icon="@Icons.Material.Filled.Add" Class="mb-n2"></MudIcon>
         Create Workout
     </MudText>
 
-    <MudTextField @bind-Value="TextValue" Label="WorkoutName" Variant="Variant.Outlined"></MudTextField>
+    <MudTextField @bind-Value="WorkoutName" Label="WorkoutName" Variant="Variant.Outlined"></MudTextField>
 
     <div>
-        <MudText Typo="Typo.body1">
+        <MudText Typo="Typo.body1" Class="mb-3">
             <MudIcon Icon="@Icons.Material.Filled.Sports" Class="mb-n1"></MudIcon>
             Exercises
         </MudText>
-
-        <ExerciseItemComponent/>
-        <ExerciseItemComponent/>
-        <ExerciseItemComponent/>
-        <ExerciseItemComponent/>
-        <ExerciseItemComponent/>
+        @if (Exercises != null)
+        {
+            @foreach (var exercise in Exercises)
+            {
+                <MudGrid Class="mb-2">
+                    <MudCheckBox @bind-Value="exercise.IsChecked" Color="Color.Secondary" LabelPosition="LabelPosition.Start" Label="@exercise.Name"></MudCheckBox>
+                    <MudImage Class="rounded-lg"></MudImage>
+                </MudGrid>
+            }
+        }
+        else
+        {
+            <p>Loading exercises...</p>
+        }
     </div>
+    <MudGrid Justify="Justify.Center">
+        <a href="" @onclick="@Create" @onclick:preventDefault>
+            Create
+        </a>
+    </MudGrid>
 
 </MudStack>
 
 @code {
-    public bool Basic_CheckBox1 { get; set; } = true;
-    public string TextValue { get; set; }
+    [Inject]
+    private LocalStorageService LocalStorageService { get; set; }
+
+
+    public string WorkoutName { get; set; }
+
+    public List<Exercise> Exercises { get; set; }
+    public List<Workout> Workouts { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        Exercises = await LocalStorageService.GetItemAsync<List<Exercise>>("exercises") ?? new();
+        Workouts = await LocalStorageService.GetItemAsync<List<Workout>>("workouts") ?? new();
+    }
+
+    private async Task Create()
+    {
+        var selectedExercises = Exercises.Where(e => e.IsChecked.Equals(true)).ToList();
+        var workout = new Workout() { 
+            Name = WorkoutName, 
+            Difficulty = "100", 
+            Exercises = selectedExercises
+        };
+        await LocalStorageService.AddWorkoutAsync(workout);
+        _navigationManager.NavigateTo("/",true);
+    }
 }

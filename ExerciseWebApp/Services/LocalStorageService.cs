@@ -1,4 +1,5 @@
-﻿using Microsoft.JSInterop;
+﻿using ExerciseWebApp.Models;
+using Microsoft.JSInterop;
 using System.Text.Json;
 
 namespace ExerciseWebApp.Services
@@ -22,6 +23,35 @@ namespace ExerciseWebApp.Services
         {
             var json = JsonSerializer.Serialize(value);
             await _jsRuntime.InvokeVoidAsync("localStorage.setItem", key, json);
+        }
+
+        public async ValueTask AddWorkoutAsync(Workout newWorkout)
+        {
+            List<Workout> existingWorkouts = await GetItemAsync<List<Workout>>("workouts") ?? new List<Workout>();
+            var lastWorkout = existingWorkouts.Last();
+            newWorkout.Id = lastWorkout.Id + 1;
+            existingWorkouts.Add(newWorkout);
+            await SetItemAsync("workouts", existingWorkouts);
+        }
+
+        public async ValueTask RemoveItemAsync(string key)
+        {
+            await _jsRuntime.InvokeVoidAsync("localStorage.removeItem", key);
+        }
+
+        public async Task SeedDataAsync<T>(string key, T data)
+        {
+            var existingData = await GetItemAsync<T>(key);
+
+            if (existingData == null)
+            {
+                await SetItemAsync(key, data);
+            }
+            else
+            {
+                await RemoveItemAsync(key);
+                await SetItemAsync(key, existingData);
+            }
         }
     }
 }

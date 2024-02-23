@@ -1,4 +1,4 @@
-﻿@page "/exercise"
+﻿@page "/exercise/{id:int}"
 @inject IJSRuntime JSRuntime
 
 
@@ -12,10 +12,14 @@
 <br />
 <MudButton @onclick="StartVideo" Variant="Variant.Filled" Color="Color.Primary">Başlat</MudButton>
 <MudButton @onclick="StopVideo" Variant="Variant.Filled" Color="Color.Secondary">Bitir</MudButton>
-<MudText>@result</MudText>
+<MudText>@Id</MudText>
 
 
     @code {
+
+    [Parameter]
+    public int Id { get; set; }
+
     private MudTheme Theme = new MudTheme();
     private object[] keypoints = new object[] { };
     private string result = "";

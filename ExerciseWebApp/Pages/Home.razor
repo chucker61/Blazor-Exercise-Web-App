@@ -1,25 +1,44 @@
 ﻿@page "/"
 @inject IDialogService DialogService
+@inject NavigationManager _navigationManager;
 
-<MudGrid Class="align-center">
-    <WorkoutItemComponent WorkoutName="deneme1" Difficulty="90"/>
-    <WorkoutItemComponent WorkoutName="deneme2" Difficulty="43"/>
-    <WorkoutItemComponent WorkoutName="deneme3" Difficulty="76"/>
-    <WorkoutItemComponent WorkoutName="deneme4" Difficulty="42"/>
-    <WorkoutItemComponent WorkoutName="deneme5" Difficulty="12"/>
-    <WorkoutItemComponent WorkoutName="deneme6" Difficulty="45"/>
-    <WorkoutItemComponent WorkoutName="deneme7" Difficulty="50"/>
-    <WorkoutItemComponent WorkoutName="deneme8" Difficulty="75"/>
-    <WorkoutItemComponent WorkoutName="deneme9" Difficulty="25"/>
-    <WorkoutItemComponent WorkoutName="deneme10" Difficulty="34"/>
+<MudGrid Class="align-center" @ref=this.grid>
+    @if (Workouts != null)
+    {
+        @foreach (var workout in Workouts)
+        {
+            <MudButton OnClick="() => NavigateToWorkoutPage(workout.Id)">
+                <WorkoutItemComponent WorkoutName="@workout.Name" Difficulty="@workout.Difficulty" />
+            </MudButton>    
+        }
+    }
+    else
+    {
+        <p>Loading...</p>
+    }
     <MudItem md="2" sm="4" xs="6">
         <MudFab OnClick="@OpenDialog" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" />
     </MudItem>
 </MudGrid>
 
-@code{
-    private void OpenDialog()
+@code {
+    [Inject]
+    LocalStorageService LocalStorageService { get; set; }
+    public List<Workout> Workouts { get; set; }
+    private MudGrid grid;
+
+    protected override async Task OnInitializedAsync()
     {
-        DialogService.Show<CreateWorkoutDialogComponent>();
+        Workouts = await LocalStorageService.GetItemAsync<List<Workout>>("workouts");
+    }
+
+    private async Task OpenDialog()
+    {
+        var result = await DialogService.ShowAsync<CreateWorkoutDialogComponent>();
+    }
+
+    private void NavigateToWorkoutPage(int id)
+    {
+        _navigationManager.NavigateTo("/exercise/" + id,true);
     }
 }

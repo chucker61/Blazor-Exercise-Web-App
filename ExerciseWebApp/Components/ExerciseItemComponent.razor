@@ -1,8 +1,10 @@
-﻿<MudGrid Justify="Justify.SpaceAround">
-    <MudCheckBox @bind-Value="Basic_CheckBox1" Color="Color.Secondary" Label="Exercise Name"></MudCheckBox>
+﻿<MudGrid Class="mb-2">
+    <MudCheckBox @bind-Value="Basic_CheckBox1" Color="Color.Secondary" LabelPosition="LabelPosition.Start" Label="@ExerciseName"></MudCheckBox>
     <MudImage Class="rounded-lg"></MudImage>
 </MudGrid>
 
 @code {
+    [Parameter]
+    public string ExerciseName { get; set; }
     public bool Basic_CheckBox1 { get; set; } = true;
 }
