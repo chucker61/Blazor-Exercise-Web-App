@@ -25,14 +25,7 @@ namespace ExerciseWebApp.Services
             await _jsRuntime.InvokeVoidAsync("localStorage.setItem", key, json);
         }
 
-        public async ValueTask AddWorkoutAsync(Workout newWorkout)
-        {
-            List<Workout> existingWorkouts = await GetItemAsync<List<Workout>>("workouts") ?? new List<Workout>();
-            var lastWorkout = existingWorkouts.Last();
-            newWorkout.Id = lastWorkout.Id + 1;
-            existingWorkouts.Add(newWorkout);
-            await SetItemAsync("workouts", existingWorkouts);
-        }
+        
 
         public async ValueTask RemoveItemAsync(string key)
         {
@@ -53,5 +46,33 @@ namespace ExerciseWebApp.Services
                 await SetItemAsync(key, existingData);
             }
         }
+
+        public async Task<Workout> GetOneWorkoutAsync(int id)
+        {
+            var workouts = await GetItemAsync<List<Workout>>("workouts");
+            var workout = workouts.Where(w => w.Id == id).FirstOrDefault();
+            return workout;
+        }
+
+        public async ValueTask AddWorkoutAsync(Workout newWorkout)
+        {
+            List<Workout> existingWorkouts = await GetItemAsync<List<Workout>>("workouts") ?? new List<Workout>();
+            var lastWorkout = existingWorkouts.Last();
+            newWorkout.Id = lastWorkout.Id + 1;
+            existingWorkouts.Add(newWorkout);
+            await SetItemAsync("workouts", existingWorkouts);
+        }
+
+        public async ValueTask UpdateWorkoutAsync(int id, Workout newWorkout)
+        {
+            var workouts = await GetItemAsync<List<Workout>>("workouts");
+            var toBeUpdatedWorkout = await GetOneWorkoutAsync(id);
+            workouts.Remove(toBeUpdatedWorkout);
+            newWorkout.Id = id;
+            workouts.Add(newWorkout);
+            await SetItemAsync("workouts", workouts);
+        }
+
+
     }
 }

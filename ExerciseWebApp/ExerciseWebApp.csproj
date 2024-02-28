@@ -8,10 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="wwwroot\css\**" />
-    <Content Remove="wwwroot\css\**" />
-    <EmbeddedResource Remove="wwwroot\css\**" />
-    <None Remove="wwwroot\css\**" />
+    <Content Remove="Components\UpdateWorkoutDialogComponent.razor" />
   </ItemGroup>
 
   <ItemGroup>
@@ -24,6 +21,18 @@
 
   <ItemGroup>
     <ServiceWorker Include="wwwroot\service-worker.js" PublishedContent="wwwroot\service-worker.published.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Components\UpdateWorkoutDialogComponent.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Components\UpdateWorkoutDialogComponent.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Components\UpdateWorkoutDialogComponent.razor" />
   </ItemGroup>
 
 </Project>

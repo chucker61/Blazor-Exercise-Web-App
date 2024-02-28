@@ -19,17 +19,17 @@
     {
         List<Exercise> Exercises = new List<Exercise>()
         {
-            new Exercise{Name = "exercise1"},
-            new Exercise{Name = "exercise2"},
-            new Exercise{Name = "exercise3"},
-            new Exercise{Name = "exercise4123123"},
+            new Exercise{Id = 1,Name = "exercise1"},
+            new Exercise{Id = 2,Name = "exercise2"},
+            new Exercise{Id = 3,Name = "exercise3"},
+            new Exercise{Id = 4,Name = "exercise4123123"},
 
         };
         List<Workout> Workouts = new List<Workout>()
         {
-            new Workout{Id = 1, Name = "Workout1", Difficulty = "25", Exercises = new List<Exercise>(){ new Exercise{Name = "exercise1"}} },
-            new Workout{Id = 2, Name = "Workout2", Difficulty = "50", Exercises = new List<Exercise>(){ new Exercise{Name = "exercise2"}} },
-            new Workout{Id = 3, Name = "Workout3", Difficulty = "75", Exercises = new List<Exercise>(){ new Exercise{Name = "exercise3"}} },
+            new Workout{Id = 1, Name = "Workout1", Difficulty = "25", Exercises = new List<Exercise>(){ new Exercise{Id = 1,Name = "exercise1"}} },
+            new Workout{Id = 2, Name = "Workout2", Difficulty = "50", Exercises = new List<Exercise>(){ new Exercise{Id = 2,Name = "exercise2"}} },
+            new Workout{Id = 3, Name = "Workout3", Difficulty = "75", Exercises = new List<Exercise>(){ new Exercise{Id = 3,Name = "exercise3"}} },
 
         };
         await LocalStorageService.SeedDataAsync("exercises",Exercises);

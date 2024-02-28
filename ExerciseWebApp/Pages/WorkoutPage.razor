@@ -1,0 +1,53 @@
+﻿@page "/workout/{id:int}"
+
+<MudGrid Justify="Justify.Center" Class="mt-5">
+    <MudText Typo="Typo.h3">@(Workout is null ? "Loading..." : Workout.Name)</MudText>
+</MudGrid>
+
+<MudGrid Justify="Justify.Center" Class="mt-5">
+    @if (Workout is not null)
+    {
+        <MudItem xs="4" Class="d-flex align-center justify-center">
+            <MudIconButton Size="Size.Large" Icon="@Icons.Material.Filled.History"></MudIconButton>
+        </MudItem>
+        <MudItem xs="4">
+            @foreach (var exercise in Workout.Exercises)
+            {
+                <MudPaper Class="pa-4 mt-5">
+                    <MudText>@exercise.Name</MudText>
+                </MudPaper>
+            }
+        </MudItem>
+        <MudItem xs="4" Class="d-flex align-center justify-center">
+            <MudIconButton OnClick="() => NavigateToExercisePage(Workout.Exercises.First().Id)" Size="Size.Large" Icon="@Icons.Material.Filled.PlayCircle"></MudIconButton>
+        </MudItem>
+    }
+    else
+    {
+        <MudText Typo="Typo.body1">Loading...</MudText>
+    }
+</MudGrid>
+
+
+@code {
+
+    [Inject]
+    public LocalStorageService _local { get; set; }
+    [Inject]
+    public NavigationManager _navigationManager { get; set; }
+
+    [Parameter]
+    public int Id { get; set; }
+
+    private Workout Workout { get; set; }
+
+    protected async override Task OnInitializedAsync()
+    {
+        Workout = await _local.GetOneWorkoutAsync(Id);
+    }
+
+    private void NavigateToExercisePage(int id)
+    {
+        _navigationManager.NavigateTo("/exercise/" + id);
+    }
+}

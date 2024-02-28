@@ -1,17 +1,24 @@
-﻿<MudItem md="3" sm="4" xs="12">
-    <MudPaper Class="d-flex align-center justify-center mud-width-full py-2 overflow-x-hidden" Square="true" Elevation="3">
-        <MudStack>
-            <h3>@WorkoutName</h3>
-            <h5>@Difficulty</h5>
-
-        </MudStack>
-
+﻿<MudItem md="6" sm="12" xs="12">
+    <MudPaper Class="d-flex align-center justify-space-between mud-width-full py-2 overflow-x-hidden" Elevation="5">
+        <MudButton OnClick="() => NavigateToWorkoutPage(Workout.Id)">
+            <MudStack Justify="Justify.FlexStart">
+                <h3>@Workout.Name</h3>
+            </MudStack>
+        </MudButton>
+        <MudIconButton Icon="@Icons.Material.Filled.Edit"></MudIconButton>
     </MudPaper>
 </MudItem>
 
 @code {
+    [Inject]
+    public NavigationManager _navigationManager { get; set; }
+
     [Parameter]
-    public string WorkoutName { get; set; }
-    [Parameter]
-    public string Difficulty { get; set; }
+    public Workout Workout { get; set; }
+
+
+    private void NavigateToWorkoutPage(int id)
+    {
+        _navigationManager.NavigateTo("/workout/" + id);
+    }
 }

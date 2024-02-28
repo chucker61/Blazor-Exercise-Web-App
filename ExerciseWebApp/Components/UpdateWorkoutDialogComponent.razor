@@ -2,8 +2,8 @@
 
 <MudStack Spacing="10" Class="pa-8">
     <MudText Typo="Typo.h6">
-        <MudIcon Icon="@Icons.Material.Filled.Add" Class="mb-n2"></MudIcon>
-        Create Workout
+        <MudIcon Icon="@Icons.Material.Filled.Edit" Class="mb-n2"></MudIcon>
+        Update Workout
     </MudText>
 
     <MudTextField @bind-Value="WorkoutName" Label="WorkoutName" Variant="Variant.Outlined"></MudTextField>
@@ -29,8 +29,8 @@
         }
     </div>
     <MudGrid Justify="Justify.Center">
-        <MudButton @onclick="Create">
-            Create
+        <MudButton @onclick="Update">
+            Update
         </MudButton>
     </MudGrid>
 
@@ -53,15 +53,16 @@
         Workouts = await LocalStorageService.GetItemAsync<List<Workout>>("workouts") ?? new();
     }
 
-    private async Task Create()
+    private async Task Update()
     {
         var selectedExercises = Exercises.Where(e => e.IsChecked.Equals(true)).ToList();
-        var workout = new Workout() { 
-            Name = WorkoutName, 
-            Difficulty = "100", 
-            Exercises = selectedExercises
-        };
+        var workout = new Workout()
+            {
+                Name = WorkoutName,
+                Difficulty = "100",
+                Exercises = selectedExercises
+            };
         await LocalStorageService.AddWorkoutAsync(workout);
-        _navigationManager.NavigateTo("/",true);
+        _navigationManager.NavigateTo("/", true);
     }
 }

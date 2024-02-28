@@ -2,14 +2,12 @@
 @inject IDialogService DialogService
 @inject NavigationManager _navigationManager;
 
-<MudGrid Class="align-center" @ref=this.grid>
+<MudGrid Class="align-center mt-5" @ref=this.grid>
     @if (Workouts != null)
     {
         @foreach (var workout in Workouts)
         {
-            <MudButton OnClick="() => NavigateToWorkoutPage(workout.Id)">
-                <WorkoutItemComponent WorkoutName="@workout.Name" Difficulty="@workout.Difficulty" />
-            </MudButton>    
+                <WorkoutItemComponent Workout="workout" />   
         }
     }
     else
@@ -37,8 +35,5 @@
         var result = await DialogService.ShowAsync<CreateWorkoutDialogComponent>();
     }
 
-    private void NavigateToWorkoutPage(int id)
-    {
-        _navigationManager.NavigateTo("/exercise/" + id,true);
-    }
+    
 }
