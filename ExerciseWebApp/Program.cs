@@ -13,6 +13,7 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.
 
 builder.Services.AddMudServices();
 builder.Services.AddScoped<LocalStorageService>();
+builder.Services.AddSingleton<PageHistoryService>();
 
 await builder.Build().RunAsync();
 

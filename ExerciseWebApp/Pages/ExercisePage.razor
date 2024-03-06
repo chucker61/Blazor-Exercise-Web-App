@@ -1,4 +1,14 @@
 ﻿@page "/exercise/{id:int}"
+@inject PageHistoryService _pageHistory;
+@if (_pageHistory.CanGoBack())
+{
+    <MudIconButton Edge="Edge.Start" Icon="@Icons.Material.Filled.ArrowBackIos" href="@_pageHistory.GetGoBackPage()">Go Back</MudIconButton>
+
+}
+else
+{
+    <MudText>Loading...</MudText>
+}
 
 @inject IJSRuntime JSRuntime
 
@@ -38,6 +48,7 @@
     protected async override Task OnInitializedAsync()
     {
         Workout = await _local.GetOneWorkoutAsync(Id);
+        _pageHistory.AddPageToHistory($"/exercise/{Id}");
     }
 
     private async Task StartVideo()

@@ -5,24 +5,28 @@
 <MudSnackbarProvider />
 
 <MudLayout>
-    <MudAppBar>
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
-        My Application
-    </MudAppBar>
-    <MudDrawer @bind-Open="@_drawerOpen">
-        <NavMenu/>
-    </MudDrawer>
-    <MudMainContent>
+    <MudMainContent Class="mt-n12">
         <MudContainer MaxWidth="MaxWidth.Medium">
             @Body
+            <div style="min-height:100px;background-color: var(--mud-palette-background);" />
         </MudContainer>
     </MudMainContent>
+    <MudAppBar Bottom="true">
+        <MudSpacer />
+        <MudStack Row="true">
+            <MudIconButton Icon="@Icons.Material.Filled.Menu" Class="grey-text text-lighten-2" />
+            <MudSpacer />
+            <MudIconButton Icon="@Icons.Material.Filled.Home" Class="grey-text text-lighten-2" Href="/" />
+            <MudSpacer />
+            <MudIconButton Icon="@Icons.Material.Filled.Settings" Class="grey-text text-lighten-2" />
+        </MudStack>
+        <MudSpacer />
+    </MudAppBar>
 </MudLayout>
 
 @code {
     private bool _isDarkMode;
     private MudThemeProvider _mudThemeProvider;
-    bool _drawerOpen = true;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -39,10 +43,5 @@
         _isDarkMode = newValue;
         StateHasChanged();
         return Task.CompletedTask;
-    }
-
-    void DrawerToggle()
-    {
-        _drawerOpen = !_drawerOpen;
     }
 }

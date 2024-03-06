@@ -1,4 +1,10 @@
 ﻿@page "/workout/{id:int}"
+@inject PageHistoryService _pageHistory;
+@if (_pageHistory.CanGoBack())
+{
+    <MudIconButton Edge="Edge.Start" Icon="@Icons.Material.Filled.ArrowBackIos" href="@_pageHistory.GetGoBackPage()">Go Back</MudIconButton>
+
+}
 
 <MudGrid Justify="Justify.Center" Class="mt-5">
     <MudText Typo="Typo.h3">@(Workout is null ? "Loading..." : Workout.Name)</MudText>
@@ -8,18 +14,18 @@
     @if (Workout is not null)
     {
         <MudItem xs="4" Class="d-flex align-center justify-center">
-            <MudIconButton Size="Size.Large" Icon="@Icons.Material.Filled.History"></MudIconButton>
+            <MudIconButton Color="Color.Error" Size="Size.Large" Icon="@Icons.Material.Filled.History"></MudIconButton>
         </MudItem>
         <MudItem xs="4">
             @foreach (var exercise in Workout.Exercises)
             {
-                <MudPaper Class="pa-4 mt-5">
+                <MudPaper Class="pa-4 mt-5 overflow-x-hidden">
                     <MudText>@exercise.Name</MudText>
                 </MudPaper>
             }
         </MudItem>
         <MudItem xs="4" Class="d-flex align-center justify-center">
-            <MudIconButton OnClick="() => NavigateToExercisePage(Workout.Exercises.First().Id)" Size="Size.Large" Icon="@Icons.Material.Filled.PlayCircle"></MudIconButton>
+            <MudIconButton Color="Color.Success" OnClick="() => NavigateToExercisePage(Workout.Exercises.First().Id)" Size="Size.Large" Icon="@Icons.Material.Filled.PlayCircle"></MudIconButton>
         </MudItem>
     }
     else
@@ -44,6 +50,7 @@
     protected async override Task OnInitializedAsync()
     {
         Workout = await _local.GetOneWorkoutAsync(Id);
+        _pageHistory.AddPageToHistory($"/workout/{Id}");
     }
 
     private void NavigateToExercisePage(int id)

@@ -1,6 +1,12 @@
 ﻿@page "/"
 @inject IDialogService DialogService
 @inject NavigationManager _navigationManager;
+@inject PageHistoryService _pageHistory;
+@if (_pageHistory.CanGoBack())
+{
+    <MudIconButton Edge="Edge.Start" Icon="@Icons.Material.Filled.ArrowBackIos" href="@_pageHistory.GetGoBackPage()">Go Back</MudIconButton>
+
+}
 
 <MudGrid Class="align-center mt-5" @ref=this.grid>
     @if (Workouts != null)
@@ -14,12 +20,14 @@
     {
         <p>Loading...</p>
     }
-    <MudItem md="2" sm="4" xs="6">
+    <MudItem md="6" sm="12" xs="12" Class="d-flex justify-center">
         <MudFab OnClick="@OpenDialog" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" />
     </MudItem>
 </MudGrid>
 
 @code {
+    private MudTheme Theme { get; set; }
+
     [Inject]
     LocalStorageService LocalStorageService { get; set; }
     public List<Workout> Workouts { get; set; }
@@ -27,6 +35,7 @@
 
     protected override async Task OnInitializedAsync()
     {
+        _pageHistory.AddPageToHistory("/");
         Workouts = await LocalStorageService.GetItemAsync<List<Workout>>("workouts");
     }
 

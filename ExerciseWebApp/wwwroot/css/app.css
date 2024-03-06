@@ -1,8 +1,11 @@
-﻿#app {
-    display:flex;
-    justify-content:center;
-    align-items:center;
+﻿
+
+#app {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     height: 100vh;
+    background-color: rgb(50 51 61);
 }
 
 .lds-ellipsis {
@@ -18,7 +21,7 @@
         width: 13px;
         height: 13px;
         border-radius: 50%;
-        background: #000000;
+        background: #ffffff;
         animation-timing-function: cubic-bezier(0, 1, 1, 0);
     }
 
