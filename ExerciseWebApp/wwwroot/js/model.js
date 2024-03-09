@@ -15,7 +15,7 @@
     }
 }
 
-async function estimatePose() {
+async function estimatePose(exerciseName) {
     setupCamera();
     const video = document.getElementById("video")
     const canvas = document.getElementById('overlay');
@@ -32,10 +32,9 @@ async function estimatePose() {
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
         drawKeypoints(result,0.2);
         requestAnimationFrame(poseDetectionFrame);
-        return result;
+        return result
     }
-
-    return poseDetectionFrame();
+    poseDetectionFrame();
 }
 
 function drawKeypoints(result, minPoseScore) {

@@ -1,10 +1,14 @@
 ﻿@page "/workout/{id:int}"
 @inject PageHistoryService _pageHistory;
-@if (_pageHistory.CanGoBack())
-{
-    <MudIconButton Edge="Edge.Start" Icon="@Icons.Material.Filled.ArrowBackIos" href="@_pageHistory.GetGoBackPage()">Go Back</MudIconButton>
+<MudGrid Justify="Justify.SpaceBetween">
+    @if (_pageHistory.CanGoBack())
+    {
+        <MudIconButton Edge="Edge.Start" Icon="@Icons.Material.Filled.ArrowBackIos" href="@_pageHistory.GetGoBackPage()">Go Back</MudIconButton>
 
-}
+    }
+    <MudIconButton Color="Color.Error" Edge="Edge.End" Size="Size.Large" Icon="@Icons.Material.Filled.History"></MudIconButton>
+
+</MudGrid>
 
 <MudGrid Justify="Justify.Center" Class="mt-5">
     <MudText Typo="Typo.h3">@(Workout is null ? "Loading..." : Workout.Name)</MudText>
@@ -13,19 +17,22 @@
 <MudGrid Justify="Justify.Center" Class="mt-5">
     @if (Workout is not null)
     {
-        <MudItem xs="4" Class="d-flex align-center justify-center">
-            <MudIconButton Color="Color.Error" Size="Size.Large" Icon="@Icons.Material.Filled.History"></MudIconButton>
+        <MudItem xs="2" Class="d-flex align-center justify-center">
         </MudItem>
-        <MudItem xs="4">
+        <MudItem xs="8">
             @foreach (var exercise in Workout.Exercises)
             {
-                <MudPaper Class="pa-4 mt-5 overflow-x-hidden">
-                    <MudText>@exercise.Name</MudText>
+                <MudPaper Elevation="4" Class="pa-4 mt-5 overflow-x-hidden">
+                    <MudText Class="d-flex align-center">
+                        <div hidden="@(!exercise.IsDone)">
+                            <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Color="Color.Success" Class="mr-3"></MudIcon>
+                        </div>
+                        @exercise.Name
+                    </MudText>
                 </MudPaper>
             }
         </MudItem>
-        <MudItem xs="4" Class="d-flex align-center justify-center">
-            <MudIconButton Color="Color.Success" OnClick="() => NavigateToExercisePage(Workout.Exercises.First().Id)" Size="Size.Large" Icon="@Icons.Material.Filled.PlayCircle"></MudIconButton>
+        <MudItem xs="2" Class="d-flex align-center justify-center">
         </MudItem>
     }
     else
@@ -33,6 +40,24 @@
         <MudText Typo="Typo.body1">Loading...</MudText>
     }
 </MudGrid>
+<div>
+    <MudGrid Class="d-flex justify-center mt-5">
+        <MudIconButton Color="Color.Success" OnClick="() => StartExercise()" Size="Size.Large" Icon="@Icons.Material.Filled.PlayCircle"></MudIconButton>
+    </MudGrid>
+</div>
+
+<MudGrid Justify="Justify.Center" Class="mt-5">
+    @if (Workout is not null)
+    {
+        <ExerciseComponent IsHidden="@ExerciseHidden" Exercise="@Workout.Exercises[_exerciseCounter]"></ExerciseComponent>
+    }
+    else
+    {
+        <MudText Typo="Typo.body1">Loading...</MudText>
+    }
+    <MudButton Variant=Variant.Filled Color="Color.Error" OnClick="() => FinishExercise()">Finish</MudButton>
+</MudGrid>
+
 
 
 @code {
@@ -45,7 +70,11 @@
     [Parameter]
     public int Id { get; set; }
 
+    public bool ExerciseHidden { get; set; } = true;
+
     private Workout Workout { get; set; }
+
+    private int _exerciseCounter = 0;
 
     protected async override Task OnInitializedAsync()
     {
@@ -53,8 +82,16 @@
         _pageHistory.AddPageToHistory($"/workout/{Id}");
     }
 
-    private void NavigateToExercisePage(int id)
+    private void StartExercise()
     {
-        _navigationManager.NavigateTo("/exercise/" + id);
+        ExerciseHidden = false;
+
+    }
+
+    private void FinishExercise()
+    {
+        Workout.Exercises[_exerciseCounter].IsDone = true;
+        if (_exerciseCounter < Workout.Exercises.Count)
+            _exerciseCounter++;
     }
 }

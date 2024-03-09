@@ -5,5 +5,6 @@
         public int Id { get; set; }
         public string Name { get; set; }
         public bool IsChecked { get; set; } = false;
+        public bool IsDone { get; set; } = false;
     }
 }

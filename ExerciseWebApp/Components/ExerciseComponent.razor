@@ -1,0 +1,46 @@
+﻿<div hidden="@IsHidden">
+    <video id="video" width="640" height="480" style="display:none" />
+
+    <MudGrid Class="mt-5" Justify="Justify.Center">
+        <MudText Typo="Typo.h3">@(Exercise is null ? "Loading..." : Exercise.Name)</MudText>
+    </MudGrid>
+
+    <MudGrid Class="mt-5" Justify="Justify.Center">
+        <MudItem Class="rounded" Style="@($"background:{Theme.Palette.Dark};")">
+            <canvas id="overlay" width="640" height="480" />
+        </MudItem>
+    </MudGrid>
+    <br />
+    <MudGrid Class="mt-5 gap-4" Justify="Justify.Center">
+        <MudButton @onclick="StartVideo" Variant="Variant.Filled" Color="Color.Primary">Başlat</MudButton>
+        <MudProgressCircular hidden="@Progress" Color="Color.Primary" Size="Size.Large" Indeterminate="@(!Progress)" />
+        <MudButton @onclick="StopVideo" Variant="Variant.Filled" Color="Color.Secondary">Bitir</MudButton>
+    </MudGrid>
+</div>
+
+
+@code {
+    [Inject]
+    IJSRuntime JSRuntime { get; set; }
+
+    [Parameter]
+    public Exercise Exercise { get; set; }
+    [Parameter]
+    public bool IsHidden { get; set; }
+
+    private MudTheme Theme = new MudTheme();
+    private bool Progress { get; set; } = true;
+
+
+    private async Task StartVideo()
+    {
+        Progress = false;
+        await JSRuntime.InvokeVoidAsync("estimatePose", Exercise.Name);
+        Progress = true;
+    }
+
+    private void StopVideo()
+    {
+        JSRuntime.InvokeVoidAsync("stopVideo");
+    }
+}
