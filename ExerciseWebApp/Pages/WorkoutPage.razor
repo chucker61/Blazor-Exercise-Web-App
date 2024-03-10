@@ -19,18 +19,32 @@
     {
         <MudItem xs="2" Class="d-flex align-center justify-center">
         </MudItem>
-        <MudItem xs="8">
-            @foreach (var exercise in Workout.Exercises)
-            {
-                <MudPaper Elevation="4" Class="pa-4 mt-5 overflow-x-hidden">
-                    <MudText Class="d-flex align-center">
-                        <div hidden="@(!exercise.IsDone)">
-                            <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Color="Color.Success" Class="mr-3"></MudIcon>
-                        </div>
-                        @exercise.Name
-                    </MudText>
-                </MudPaper>
-            }
+        <MudItem xs="8" Class="d-flex justify-center">
+            <MudStack>
+                @foreach (var exercise in Workout.Exercises)
+                {
+                    <MudTooltip ShowOnHover=false ShowOnFocus=true>
+                        <ChildContent>
+                            <MudButton>
+                                <MudPaper Elevation="4" Class="d-flex pa-4 overflow-x-hidden" Style="@(exercise.IsDone ? $"background:{Colors.Green.Lighten3};" : $"background:{Colors.Grey.Darken3}")">
+                                    <MudText Class="d-flex align-center">
+                                        <div hidden="@(!exercise.IsDone)">
+                                            <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Color="Color.Success" Class="mr-3"></MudIcon>
+                                        </div>
+                                        @exercise.Name
+                                    </MudText>
+                                </MudPaper>
+                            </MudButton>
+                        </ChildContent>
+                        <TooltipContent>
+                            <a href="#">Click me!</a>
+                            <a href="@exercise.VideoLink" target="_blank">@exercise.VideoLink</a>
+                            <MudText Typo="Typo.body1">@exercise.Description</MudText>
+                            <MudIcon Icon="@Icons.Material.Filled.Star" />
+                        </TooltipContent>
+                    </MudTooltip>
+                }
+            </MudStack>
         </MudItem>
         <MudItem xs="2" Class="d-flex align-center justify-center">
         </MudItem>
@@ -40,21 +54,24 @@
         <MudText Typo="Typo.body1">Loading...</MudText>
     }
 </MudGrid>
-<div>
-    <MudGrid Class="d-flex justify-center mt-5">
-        <MudIconButton Color="Color.Success" OnClick="() => StartExercise()" Size="Size.Large" Icon="@Icons.Material.Filled.PlayCircle"></MudIconButton>
-    </MudGrid>
-</div>
+
+<MudGrid hidden="@(!ExerciseHidden)" Class="d-flex justify-center mt-5">
+    <MudIconButton Color="Color.Success" OnClick="() => StartExercise()" Size="Size.Large" Icon="@Icons.Material.Filled.PlayCircle"></MudIconButton>
+</MudGrid>
+
 
 <MudGrid Justify="Justify.Center" Class="mt-5">
     @if (Workout is not null)
     {
-        <ExerciseComponent IsHidden="@ExerciseHidden" Exercise="@Workout.Exercises[_exerciseCounter]"></ExerciseComponent>
+        <ExerciseComponent StartButtonHidden=@StartButtonHidden IsHidden="@ExerciseHidden" Exercise="@Workout.Exercises[_exerciseCounter]"></ExerciseComponent>
     }
     else
     {
         <MudText Typo="Typo.body1">Loading...</MudText>
     }
+</MudGrid>
+
+<MudGrid hidden="@ExerciseHidden" Justify="Justify.Center" Class="mt-10">
     <MudButton Variant=Variant.Filled Color="Color.Error" OnClick="() => FinishExercise()">Finish</MudButton>
 </MudGrid>
 
@@ -66,11 +83,14 @@
     public LocalStorageService _local { get; set; }
     [Inject]
     public NavigationManager _navigationManager { get; set; }
+    [Inject]
+    public IJSRuntime JSRuntime { get; set; }
 
     [Parameter]
     public int Id { get; set; }
 
     public bool ExerciseHidden { get; set; } = true;
+    public bool StartButtonHidden { get; set; } = false;
 
     private Workout Workout { get; set; }
 
@@ -85,13 +105,22 @@
     private void StartExercise()
     {
         ExerciseHidden = false;
-
     }
 
-    private void FinishExercise()
+    private async Task FinishExercise()
     {
+        await JSRuntime.InvokeVoidAsync("stopVideo");
         Workout.Exercises[_exerciseCounter].IsDone = true;
-        if (_exerciseCounter < Workout.Exercises.Count)
+        if (_exerciseCounter < Workout.Exercises.Count - 1)
             _exerciseCounter++;
+        else
+        {
+            foreach (var exercise in Workout.Exercises)
+            {
+                _exerciseCounter = 0;
+                ExerciseHidden = true;
+                exercise.IsDone = false;
+            }
+        }
     }
 }

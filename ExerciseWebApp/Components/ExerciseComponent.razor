@@ -12,9 +12,8 @@
     </MudGrid>
     <br />
     <MudGrid Class="mt-5 gap-4" Justify="Justify.Center">
-        <MudButton @onclick="StartVideo" Variant="Variant.Filled" Color="Color.Primary">Başlat</MudButton>
-        <MudProgressCircular hidden="@Progress" Color="Color.Primary" Size="Size.Large" Indeterminate="@(!Progress)" />
-        <MudButton @onclick="StopVideo" Variant="Variant.Filled" Color="Color.Secondary">Bitir</MudButton>
+        <MudButton hidden="@StartButtonHidden" Disabled="StartButtonDisable" @onclick="StartVideo" Variant="Variant.Filled" Color="Color.Primary">Başlat</MudButton>
+        <MudProgressCircular hidden="@Progress" Color="Color.Primary" Size="Size.Small" Indeterminate="@(!Progress)" />
     </MudGrid>
 </div>
 
@@ -27,20 +26,22 @@
     public Exercise Exercise { get; set; }
     [Parameter]
     public bool IsHidden { get; set; }
+    [Parameter]
+    public bool StartButtonHidden { get; set; }
 
     private MudTheme Theme = new MudTheme();
     private bool Progress { get; set; } = true;
+    public bool StartButtonDisable { get; set; } = false;
 
 
     private async Task StartVideo()
     {
+        StartButtonDisable = true;
         Progress = false;
         await JSRuntime.InvokeVoidAsync("estimatePose", Exercise.Name);
         Progress = true;
+        StartButtonHidden = true;
+        StartButtonDisable = false;
     }
 
-    private void StopVideo()
-    {
-        JSRuntime.InvokeVoidAsync("stopVideo");
-    }
 }

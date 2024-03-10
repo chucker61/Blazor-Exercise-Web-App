@@ -19,20 +19,21 @@
     {
         List<Exercise> Exercises = new List<Exercise>()
         {
-            new Exercise{Id = 1,Name = "exercise1"},
-            new Exercise{Id = 2,Name = "exercise2"},
-            new Exercise{Id = 3,Name = "exercise3"},
-            new Exercise{Id = 4,Name = "exercise4123123"},
+            new Exercise{Id = 1,Name = "Squat", VideoLink = "https://www.youtube.com/watch?v=6bvZMJATN-s", Description = "A squat is a strength exercise in which the trainee lowers their hips from a standing position and then stands back up. During the descent, the hip and knee joints flex while the ankle joint dorsiflexes; conversely the hip and knee joints extend and the ankle joint plantarflexes when standing up."},
+            new Exercise{Id = 2,Name = "Push Up", VideoLink= "https://www.youtube.com/watch?v=lsRAK6cr5kY", Description = "an exercise in which a person, keeping a prone position with the hands palms down under the shoulders, the balls of the feet on the ground, and the back straight, pushes the body up and lets it down by an alternate straightening and bending of the arms."},
+            new Exercise{Id = 3,Name = "Pull Up", VideoLink = "https://www.youtube.com/watch?v=NZMT3UASNJU", Description = "A pull-up is an upper-body exercise that involves hanging from a pull-up bar by your hands with your palms facing away from you, and lifting your entire body up with your arm and back muscles until your chest touches the bar. The pull-up movement uses multiple muscles at once, making it a compound exercise."},
+            new Exercise{Id = 4,Name = "Crunches", VideoLink = "https://www.youtube.com/watch?v=VJctvboD8PM", Description = "Crunch is an abdominal exercise that works the rectus abdominis muscle. It enables both building six-pack abs and tightening the belly. Crunches use the exerciser's own body weight to tone muscle and are recommended by some experts, despite negative research results, as a low-cost exercise that can be performed at home. Crunches are less effective than other exercises such as planks and carry risk of back injury."},
 
         };
+
         List<Workout> Workouts = new List<Workout>()
         {
-            new Workout{Id = 1, Name = "Workout1", Difficulty = "25", Exercises = new List<Exercise>(){ new Exercise{Id = 1,Name = "exercise1"}} },
-            new Workout{Id = 2, Name = "Workout2", Difficulty = "50", Exercises = new List<Exercise>(){ new Exercise{Id = 2,Name = "exercise2"}} },
-            new Workout{Id = 3, Name = "Workout3", Difficulty = "75", Exercises = new List<Exercise>(){ new Exercise{Id = 3,Name = "exercise3"}} },
+            new Workout{Id = 1, Name = "Workout1", Difficulty = "25", Exercises = new List<Exercise>(){ new Exercise{Id = 1,Name = "Squat", VideoLink = "https://www.youtube.com/watch?v=6bvZMJATN-s", Description = "A squat is a strength exercise in which the trainee lowers their hips from a standing position and then stands back up. During the descent, the hip and knee joints flex while the ankle joint dorsiflexes; conversely the hip and knee joints extend and the ankle joint plantarflexes when standing up."}} },
+            new Workout{Id = 2, Name = "Workout2", Difficulty = "50", Exercises = new List<Exercise>(){ new Exercise{Id = 2,Name = "Push Up", VideoLink= "https://www.youtube.com/watch?v=lsRAK6cr5kY", Description = "an exercise in which a person, keeping a prone position with the hands palms down under the shoulders, the balls of the feet on the ground, and the back straight, pushes the body up and lets it down by an alternate straightening and bending of the arms."}} },
+            new Workout{Id = 3, Name = "Workout3", Difficulty = "75", Exercises = new List<Exercise>(){ new Exercise{Id = 3,Name = "Pull Up", VideoLink = "https://www.youtube.com/watch?v=NZMT3UASNJU", Description = "A pull-up is an upper-body exercise that involves hanging from a pull-up bar by your hands with your palms facing away from you, and lifting your entire body up with your arm and back muscles until your chest touches the bar. The pull-up movement uses multiple muscles at once, making it a compound exercise."}} },
 
         };
-        await LocalStorageService.SeedDataAsync("exercises",Exercises);
-        await LocalStorageService.SeedDataAsync("workouts",Workouts);
+        await LocalStorageService.SeedDataAsync("exercises", Exercises);
+        await LocalStorageService.SeedDataAsync("workouts", Workouts);
     }
 }
