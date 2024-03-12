@@ -2,18 +2,25 @@
 @inject IDialogService DialogService
 @inject NavigationManager _navigationManager;
 @inject PageHistoryService _pageHistory;
-@if (_pageHistory.CanGoBack())
-{
-    <MudIconButton Edge="Edge.Start" Icon="@Icons.Material.Filled.ArrowBackIos" href="@_pageHistory.GetGoBackPage()">Go Back</MudIconButton>
-
-}
 
 <MudGrid Class="align-center mt-5" @ref=this.grid>
     @if (Workouts != null)
     {
         @foreach (var workout in Workouts)
         {
-                <WorkoutItemComponent Workout="workout" />   
+            <MudItem md="6" sm="12" xs="12">
+                <MudPaper Class="d-flex align-center justify-space-between mud-width-full py-2 overflow-x-hidden" Elevation="5">
+                    <MudButton OnClick="() => NavigateToWorkoutPage(workout.Id)">
+                        <MudStack Justify="Justify.FlexStart">
+                            <h3>@workout.Name</h3>
+                        </MudStack>
+                    </MudButton>
+                    <div>
+                        <MudIconButton Color="Color.Warning" OnClick="() => OpenUpdateWorkoutDialog(workout)" Icon="@Icons.Material.Filled.Edit"></MudIconButton>
+                        <MudIconButton Color="Color.Error" OnClick="() => OpenDeleteWorkoutDialog(workout)" Icon="@Icons.Material.Filled.Delete"></MudIconButton>
+                    </div>
+                </MudPaper>
+            </MudItem>
         }
     }
     else
@@ -21,26 +28,55 @@
         <p>Loading...</p>
     }
     <MudItem md="6" sm="12" xs="12" Class="d-flex justify-center">
-        <MudFab OnClick="@OpenDialog" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" />
+        <MudFab OnClick="@OpenCreateWorkoutDialog" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" />
     </MudItem>
 </MudGrid>
+
+<style>
+    .my-custom-class {
+        backdrop-filter: blur(10px);
+    }
+</style>
 
 @code {
     private MudTheme Theme { get; set; }
 
     [Inject]
     LocalStorageService LocalStorageService { get; set; }
-    public List<Workout> Workouts { get; set; }
+    public IOrderedEnumerable<Workout> Workouts { get; set; }
     private MudGrid grid;
 
     protected override async Task OnInitializedAsync()
     {
         _pageHistory.AddPageToHistory("/");
-        Workouts = await LocalStorageService.GetItemAsync<List<Workout>>("workouts");
+        var unOrderedWorkouts = await LocalStorageService.GetItemAsync<List<Workout>>("workouts");
+        Workouts = unOrderedWorkouts.OrderBy(x => x.Id);
     }
 
-    private async Task OpenDialog()
+    private void NavigateToWorkoutPage(int id)
     {
-        var result = await DialogService.ShowAsync<CreateWorkoutDialogComponent>();
+        _navigationManager.NavigateTo("/workout/" + id);
+    }
+
+    private async Task OpenCreateWorkoutDialog()
+    {
+        var options = new DialogOptions { ClassBackground = "my-custom-class" };
+        var result = await DialogService.ShowAsync<CreateWorkoutDialogComponent>("",options);
+    }
+
+    private async Task OpenDeleteWorkoutDialog(Workout workout)
+    {
+        var options = new DialogOptions { ClassBackground = "my-custom-class" };
+        var parameters = new DialogParameters<DeleteWorkoutDialogComponent>();
+        parameters.Add(x => x.Workout, workout);
+        var result = await DialogService.ShowAsync<DeleteWorkoutDialogComponent>("", parameters,options);
+    }
+
+    private async Task OpenUpdateWorkoutDialog(Workout workout)
+    {
+        var options = new DialogOptions { ClassBackground = "my-custom-class" };
+        var parameters = new DialogParameters<UpdateWorkoutDialogComponent>();
+        parameters.Add(x => x.Workout, workout);
+        var result = await DialogService.ShowAsync<UpdateWorkoutDialogComponent>("", parameters,options);
     }
 }

@@ -1,0 +1,33 @@
+﻿@inject NavigationManager _navigationManager;
+
+<MudStack Spacing="10" Class="pa-8">
+    <MudText Typo="Typo.h6">
+        <MudIcon Icon="@Icons.Material.Filled.Delete" Class="mb-n2"></MudIcon>
+        Delete Workout
+    </MudText>
+
+    <MudText Typo="Typo.body1">
+        Are you sure about deleting @Workout.Name?
+    </MudText>
+    
+    <MudGrid Justify="Justify.Center">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" @onclick="Delete">
+            Delete
+        </MudButton>
+    </MudGrid>
+
+</MudStack>
+
+@code {
+    [Inject]
+    private LocalStorageService LocalStorageService { get; set; }
+
+    [Parameter]
+    public Workout Workout { get; set; }
+
+    private async Task Delete()
+    {
+        await LocalStorageService.DeleteWorkoutAsync(Workout.Id);
+        _navigationManager.NavigateTo("/", true);
+    }
+}

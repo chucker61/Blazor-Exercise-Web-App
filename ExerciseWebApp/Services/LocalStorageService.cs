@@ -72,6 +72,14 @@ namespace ExerciseWebApp.Services
             workouts.Add(newWorkout);
             await SetItemAsync("workouts", workouts);
         }
+        
+        public async ValueTask DeleteWorkoutAsync(int id)
+        {
+            var workouts = await GetItemAsync<List<Workout>>("workouts");
+            var toBeDeletedWorkout = await GetOneWorkoutAsync(id);
+            workouts.Remove(toBeDeletedWorkout);
+            await SetItemAsync("workouts", workouts);
+        }
 
 
     }

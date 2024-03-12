@@ -29,7 +29,7 @@
         }
     </div>
     <MudGrid Justify="Justify.Center">
-        <MudButton @onclick="Create">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" @onclick="Create">
             Create
         </MudButton>
     </MudGrid>
@@ -45,6 +45,7 @@
 
     public List<Exercise> Exercises { get; set; }
     public List<Workout> Workouts { get; set; }
+
 
 
     protected override async Task OnInitializedAsync()
