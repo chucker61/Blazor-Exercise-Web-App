@@ -40,6 +40,7 @@
     [Inject]
     private LocalStorageService LocalStorageService { get; set; }
 
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
 
     public string WorkoutName { get; set; }
 
@@ -63,6 +64,6 @@
             Exercises = selectedExercises
         };
         await LocalStorageService.AddWorkoutAsync(workout);
-        _navigationManager.NavigateTo("/",true);
+        MudDialog.Close();
     }
 }

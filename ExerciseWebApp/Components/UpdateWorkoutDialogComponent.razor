@@ -67,6 +67,6 @@
                 Exercises = selectedExercises
             };
         await LocalStorageService.UpdateWorkoutAsync(Workout.Id,workout);
-        _navigationManager.NavigateTo("/", true);
+        MudDialog.Close();
     }
 }
