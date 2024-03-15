@@ -25,8 +25,6 @@ namespace ExerciseWebApp.Services
             await _jsRuntime.InvokeVoidAsync("localStorage.setItem", key, json);
         }
 
-        
-
         public async ValueTask RemoveItemAsync(string key)
         {
             await _jsRuntime.InvokeVoidAsync("localStorage.removeItem", key);
@@ -57,8 +55,13 @@ namespace ExerciseWebApp.Services
         public async ValueTask AddWorkoutAsync(Workout newWorkout)
         {
             List<Workout> existingWorkouts = await GetItemAsync<List<Workout>>("workouts") ?? new List<Workout>();
-            var lastWorkout = existingWorkouts.Last();
-            newWorkout.Id = lastWorkout.Id + 1;
+            if (existingWorkouts.Count == 0)
+                newWorkout.Id = 1;
+            else
+            {
+                var lastWorkout = existingWorkouts.Last();
+                newWorkout.Id = lastWorkout.Id + 1;
+            }
             existingWorkouts.Add(newWorkout);
             await SetItemAsync("workouts", existingWorkouts);
         }
@@ -72,7 +75,7 @@ namespace ExerciseWebApp.Services
             workouts.Add(newWorkout);
             await SetItemAsync("workouts", workouts);
         }
-        
+
         public async ValueTask DeleteWorkoutAsync(int id)
         {
             var workouts = await GetItemAsync<List<Workout>>("workouts");
@@ -80,7 +83,5 @@ namespace ExerciseWebApp.Services
             workouts.Remove(toBeDeletedWorkout);
             await SetItemAsync("workouts", workouts);
         }
-
-
     }
 }
