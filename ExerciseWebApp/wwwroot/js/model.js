@@ -31,9 +31,12 @@ async function estimatePose(exerciseName) {
         const result = await detector.estimatePoses(video);
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-        drawKeypoints(result[0], 0.2);
-        drawPoseLines(result[0], 0.2);
-        findAngle(result[0], 0.2);
+        if (result != null && result.length > 0) {
+
+            drawKeypoints(result[0], 0.2);
+            drawPoseLines(result[0], 0.2);
+            findAngle(result[0], 0.2);
+        }
         requestAnimationFrame(poseDetectionFrame);
         return result;
     }
