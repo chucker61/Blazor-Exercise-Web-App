@@ -15,9 +15,17 @@
     }
 }
 
+const keypointsByExerciseName = [
+    { exerciseName: "Squat", pcsForValidation: [3, 5, 8, 10], pcsForCount: [10,11], angle: [30, 60] },
+    { exerciseName: "Push Up", pcsForValidation: [1, 2, 3, 4], pcsForCount: [1, 2], angle: [30, 60] },
+    { exerciseName: "Pull Up", pcsForValidation: [1, 2, 3, 4], pcsForCount: [1, 2], angle: [30, 60] },
+    { exerciseName:"Crunches", pcsForValidation: [1, 2, 3, 4], pcsForCount: [1, 2], angle: [30, 60] },
+];
+
 
 async function estimatePose(exerciseName) {
     setupCamera();
+    const exercise = keypointsByExerciseName.find(x => x.exerciseName === exerciseName);
     const video = document.getElementById("video");
     const canvas = document.getElementById('overlay');
     const ctx = canvas.getContext('2d');
@@ -32,9 +40,8 @@ async function estimatePose(exerciseName) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
         if (result != null && result.length > 0) {
-
             drawKeypoints(result[0], 0.2);
-            drawPoseLines(result[0], 0.2);
+            drawPoseLines(result[0], exercise, 0.2);
             findAngle(result[0], 0.2);
         }
         requestAnimationFrame(poseDetectionFrame);
@@ -57,25 +64,25 @@ function drawKeypoints(result, minPoseScore) {
     });
 }
 
-function drawPoseLines(result, minPoseScore) {
+function drawPoseLines(result, exercise, minPoseScore) {
     const ctx = document.getElementById('overlay').getContext('2d');
     ctx.strokeStyle = 'blue';
     ctx.lineWidth = 2;
 
     const keypoints = result.keypoints;
     const poseConnections = [
-        { from: keypoints[5], to: keypoints[7] }, //sol omuzdan sol dirseğe
-        { from: keypoints[5], to: keypoints[6] }, // sol omuzdan sağ omuza
-        { from: keypoints[7], to: keypoints[9] }, //sol dirsekten sol el bileğine
-        { from: keypoints[5], to: keypoints[11] }, // sol omuzdan sol kalçaya
-        { from: keypoints[11], to: keypoints[12] }, //sol kalçadan sağ kalçaya
-        { from: keypoints[11], to: keypoints[13] }, //sol kolçadan sol dize
-        { from: keypoints[13], to: keypoints[15] }, //sol dizden sol ayak bileğine
-        { from: keypoints[6], to: keypoints[8] }, //sağ omuzdan sağ dirseğe
-        { from: keypoints[6], to: keypoints[12] }, //sağ omuzdan sağ kalçaya
-        { from: keypoints[8], to: keypoints[10] }, //sağ dirsekten sağ el bileğine
-        { from: keypoints[12], to: keypoints[14] }, //sağ kalçadan sağ dize
-        { from: keypoints[14], to: keypoints[16] }, //sağ dizden sağ ayak bileğine
+        { id: 0, from: keypoints[5], to: keypoints[7] }, //sol omuzdan sol dirseğe
+        { id: 1, from: keypoints[5], to: keypoints[6] }, // sol omuzdan sağ omuza
+        { id: 2, from: keypoints[7], to: keypoints[9] }, //sol dirsekten sol el bileğine
+        { id: 3, from: keypoints[5], to: keypoints[11] }, // sol omuzdan sol kalçaya
+        { id: 4, from: keypoints[11], to: keypoints[12] }, //sol kalçadan sağ kalçaya
+        { id: 5, from: keypoints[11], to: keypoints[13] }, //sol kolçadan sol dize
+        { id: 6, from: keypoints[13], to: keypoints[15] }, //sol dizden sol ayak bileğine
+        { id: 7, from: keypoints[6], to: keypoints[8] }, //sağ omuzdan sağ dirseğe
+        { id: 8, from: keypoints[6], to: keypoints[12] }, //sağ omuzdan sağ kalçaya
+        { id: 9, from: keypoints[8], to: keypoints[10] }, //sağ dirsekten sağ el bileğine
+        { id: 10, from: keypoints[12], to: keypoints[14] }, //sağ kalçadan sağ dize
+        { id: 11, from: keypoints[14], to: keypoints[16] }, //sağ dizden sağ ayak bileğine
     ];
 
     poseConnections.forEach(connection => {
