@@ -54,7 +54,11 @@
     }
 </MudGrid>
 
-<MudGrid hidden="@(!ExerciseHidden)" Class="d-flex justify-center mt-5">
+<MudGrid hidden="@ContinueButtonHidden" Class="d-flex justify-center mt-5">
+    <MudText Typo="Typo.h6">Next Exercise: @(CurrentExercise is null ? "Loading..." : CurrentExercise.Name)</MudText>
+</MudGrid>
+
+<MudGrid hidden="@StartButtonHidden" Class="d-flex justify-center mt-5">
     <MudIconButton Color="Color.Success" OnClick="() => StartExercise()" Size="Size.Large" Icon="@Icons.Material.Filled.PlayCircle"></MudIconButton>
 </MudGrid>
 
@@ -62,7 +66,7 @@
 <MudGrid Justify="Justify.Center" Class="mt-5">
     @if (Workout is not null)
     {
-        <ExerciseComponent StartButtonHidden=@StartButtonHidden IsHidden="@ExerciseHidden" Exercise="@Workout.Exercises[_exerciseCounter]"></ExerciseComponent>
+        <ExerciseComponent OnDblClickCallBack="@FinishExercise" StartButtonHidden=@StartButtonHidden IsHidden="@ExerciseHidden" Exercise="CurrentExercise"></ExerciseComponent>
     }
     else
     {
@@ -70,8 +74,8 @@
     }
 </MudGrid>
 
-<MudGrid hidden="@ExerciseHidden" Justify="Justify.Center" Class="mt-10">
-    <MudButton Variant=Variant.Filled Color="Color.Error" OnClick="() => FinishExercise()">Finish</MudButton>
+<MudGrid hidden="@ContinueButtonHidden" Justify="Justify.Center" Class="mt-10">
+    <MudButton Variant=Variant.Filled Color="Color.Primary" @onclick="StartVideo">Start Exercise</MudButton>
 </MudGrid>
 
 
@@ -92,28 +96,43 @@
 
     public bool ExerciseHidden { get; set; } = true;
     public bool StartButtonHidden { get; set; } = false;
+    public bool ContinueButtonHidden { get; set; } = true;
 
     private Workout Workout { get; set; }
+    private Exercise CurrentExercise { get; set; }
 
     private int _exerciseCounter = 0;
 
     protected async override Task OnInitializedAsync()
     {
         Workout = await _local.GetOneWorkoutAsync(Id);
+        CurrentExercise = Workout.Exercises[_exerciseCounter];
         _pageHistory.AddPageToHistory($"/workout/{Id}");
     }
 
     private void StartExercise()
     {
+        StartButtonHidden = true;
+        ContinueButtonHidden = false;
+    }
+
+    private async Task StartVideo()
+    {
         ExerciseHidden = false;
+        await JSRuntime.InvokeVoidAsync("estimatePose", CurrentExercise.Name);
     }
 
     private async Task FinishExercise()
     {
-        await JSRuntime.InvokeVoidAsync("stopVideo");
-        Workout.Exercises[_exerciseCounter].IsDone = true;
+        await JSRuntime.InvokeVoidAsync("quitExercise");
+        CurrentExercise.IsDone = true;
         if (_exerciseCounter < Workout.Exercises.Count - 1)
+        {
+            ExerciseHidden = true;
+            ContinueButtonHidden = false;
             _exerciseCounter++;
+            StartButtonHidden = true;
+        }
         else
         {
             foreach (var exercise in Workout.Exercises)
@@ -121,6 +140,8 @@
                 _exerciseCounter = 0;
                 ExerciseHidden = true;
                 exercise.IsDone = false;
+                ContinueButtonHidden = true;
+                StartButtonHidden = false;
             }
         }
     }

@@ -7,7 +7,7 @@
 
     <MudGrid Class="mt-5" Justify="Justify.Center">
         <MudItem Class="rounded" Style="@($"background:{Theme.Palette.Dark};")">
-            <canvas id="overlay" width="640" height="480" />
+            <canvas @ondblclick="OnDblClickCallBack" id="overlay" width="640" height="480" style="transform:rotate(180deg);-webkit-transform:rotateY(180deg);-moz-transform:rotateY(180deg)" />
         </MudItem>
     </MudGrid>
     <br />
@@ -37,6 +37,8 @@
     public bool IsHidden { get; set; }
     [Parameter]
     public bool StartButtonHidden { get; set; }
+    [Parameter]
+    public EventCallback OnDblClickCallBack { get; set; }
 
     private MudTheme Theme = new MudTheme();
     private bool Progress { get; set; } = true;
@@ -52,5 +54,10 @@
         StartButtonHidden = true;
         StartButtonDisable = false;
     }
+
+    private async Task StopVideo()
+    {
+        await JSRuntime.InvokeVoidAsync("quitExercise");
+    } 
 
 }

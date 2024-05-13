@@ -41,9 +41,6 @@ const keypointsByExerciseName = [
 async function estimatePose(exerciseName) {
     setupCamera();
     document.getElementById("overlay").requestFullscreen().catch(console.log);
-    document.addEventListener("dblclick", () => {
-        document.exitFullscreen();
-    });
     const exercise = keypointsByExerciseName.find(x => x.exerciseName === exerciseName);
     const video = document.getElementById("video");
     const canvas = document.getElementById('overlay');
@@ -70,6 +67,11 @@ async function estimatePose(exerciseName) {
     poseDetectionFrame();
 
     
+}
+
+function quitExercise() {   
+    stopVideo();
+    document.exitFullscreen();
 }
 
 
