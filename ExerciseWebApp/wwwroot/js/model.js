@@ -15,6 +15,21 @@
     }
 }
 
+
+function getFullScreenElement() {
+    return document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement;
+}
+
+function toggleFullScreen() {
+
+    if (getFullScreenElement()) {
+        document.exitFullscreen();
+    } else {
+        document.getElementById("overlay").requestFullscreen().catch(console.log);
+    }
+}
+
+
 const keypointsByExerciseName = [
     { exerciseName: "Squat", pcsForValidation: [3, 5, 8, 10], pcsForCount: [10,11], angle: [30, 60] },
     { exerciseName: "Push Up", pcsForValidation: [1, 2, 3, 4], pcsForCount: [1, 2], angle: [30, 60] },
@@ -25,11 +40,15 @@ const keypointsByExerciseName = [
 
 async function estimatePose(exerciseName) {
     setupCamera();
+    document.getElementById("overlay").requestFullscreen().catch(console.log);
+    document.addEventListener("dblclick", () => {
+        document.exitFullscreen();
+    });
     const exercise = keypointsByExerciseName.find(x => x.exerciseName === exerciseName);
     const video = document.getElementById("video");
     const canvas = document.getElementById('overlay');
     const ctx = canvas.getContext('2d');
-    detector = await createDetector();
+    detector = await createDetector(); 
 
     async function createDetector() {
         return await poseDetection.createDetector(poseDetection.SupportedModels.MoveNet);
@@ -49,6 +68,8 @@ async function estimatePose(exerciseName) {
     }
 
     poseDetectionFrame();
+
+    
 }
 
 
