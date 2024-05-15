@@ -83,5 +83,34 @@ namespace ExerciseWebApp.Services
             workouts.Remove(toBeDeletedWorkout);
             await SetItemAsync("workouts", workouts);
         }
+
+        public async ValueTask SaveWorkoutHistoryAsync(WorkoutHistory wHistory)
+        {
+            List<WorkoutHistory> workoutHistories = await GetItemAsync<List<WorkoutHistory>>("workoutHistories") ?? new List<WorkoutHistory>();
+            if (workoutHistories.Count == 0)
+            {
+                   wHistory.Id = 1;
+            }
+            else
+            {
+                var lastWorkoutHistory = workoutHistories.Last();
+                wHistory.Id = lastWorkoutHistory.Id + 1;
+            }
+            workoutHistories.Add(wHistory);
+            await SetItemAsync("workoutHistories", workoutHistories);
+        }
+
+        public async Task<WorkoutHistory> GetOneWorkoutHistoryAsync(int id)
+        {
+            var workoutHistories = await GetItemAsync<List<WorkoutHistory>>("workoutHistories");
+            var workoutHistory = workoutHistories.Where(w => w.Id == id).FirstOrDefault();
+            return workoutHistory;
+        }
+
+        public async Task<List<WorkoutHistory>> GetAllWorkoutHistoriesAsync()
+        {
+            var workoutHistories = await GetItemAsync<List<WorkoutHistory>>("workoutHistories");
+            return workoutHistories;
+        }
     }
 }

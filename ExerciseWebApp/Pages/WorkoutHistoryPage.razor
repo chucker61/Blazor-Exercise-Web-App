@@ -1,0 +1,53 @@
+﻿@page "/workout-history"
+
+<MudGrid Justify="Justify.SpaceBetween">
+    <MudIconButton Edge="Edge.Start" Icon="@Icons.Material.Filled.ArrowBackIos" href="/"></MudIconButton>
+</MudGrid>
+
+<MudExpansionPanels Class="mt-10">
+    @if (WorkoutHistories is null)
+    {
+        <p>Loading...</p>
+    }
+    else
+    {
+        foreach (var workoutHistory in WorkoutHistories)
+        {
+            <MudExpansionPanel Text="@(workoutHistory.Workout.Name + workoutHistory.Duration)">
+                <MudTable Items="@workoutHistory.ExerciseHistories" Hover="true" Breakpoint="Breakpoint.Sm" LoadingProgressColor="Color.Info" >
+                    <HeaderContent>
+                        <MudTh>Exercise Name</MudTh>
+                        <MudTh>Duration</MudTh>
+                        <MudTh>Repetitions</MudTh>
+                        <MudTh>Sets</MudTh>
+                    </HeaderContent>
+                    <RowTemplate>
+                        <MudTd DataLabel="Exercsie Name">@context.Exercise.Name</MudTd>
+                        <MudTd DataLabel="Duration">@context.Duration</MudTd>
+                        <MudTd DataLabel="Repetition">@context.Repetitions</MudTd>
+                        <MudTd DataLabel="Sets">@context.Sets</MudTd>
+                    </RowTemplate>
+                </MudTable>
+            </MudExpansionPanel>
+        }
+    }
+
+</MudExpansionPanels>
+
+@code {
+
+    [Inject]
+    private LocalStorageService _local { get; set; }
+
+    private bool _loading;
+
+    private List<WorkoutHistory> WorkoutHistories { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _loading = true;
+        WorkoutHistories = await _local.GetAllWorkoutHistoriesAsync();
+        _loading = false;
+    }
+
+}

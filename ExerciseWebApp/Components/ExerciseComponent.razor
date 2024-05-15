@@ -1,4 +1,4 @@
-﻿<div hidden="@IsHidden">
+﻿<div hidden="@(IsHidden)">
     <video id="video" width="640" height="480" style="display:none" />
 
     <MudGrid Class="mt-5" Justify="Justify.Center">
@@ -11,10 +11,6 @@
         </MudItem>
     </MudGrid>
     <br />
-    <MudGrid Class="mt-5 gap-4" Justify="Justify.Center">
-        <MudButton hidden="@StartButtonHidden" Disabled="StartButtonDisable" @onclick="StartVideo" Variant="Variant.Filled" Color="Color.Primary">Başlat</MudButton>
-        <MudProgressCircular hidden="@Progress" Color="Color.Primary" Size="Size.Small" Indeterminate="@(!Progress)" />
-    </MudGrid>
 </div>
 
 <style>
@@ -35,8 +31,7 @@
     public Exercise Exercise { get; set; }
     [Parameter]
     public bool IsHidden { get; set; }
-    [Parameter]
-    public bool StartButtonHidden { get; set; }
+
     [Parameter]
     public EventCallback OnDblClickCallBack { get; set; }
 
@@ -51,7 +46,6 @@
         Progress = false;
         await JSRuntime.InvokeVoidAsync("estimatePose", Exercise.Name);
         Progress = true;
-        StartButtonHidden = true;
         StartButtonDisable = false;
     }
 
