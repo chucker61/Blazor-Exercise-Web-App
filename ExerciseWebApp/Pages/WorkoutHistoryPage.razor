@@ -13,7 +13,7 @@
     {
         foreach (var workoutHistory in WorkoutHistories)
         {
-            <MudExpansionPanel Text="@(workoutHistory.Workout.Name + workoutHistory.Duration)">
+            <MudExpansionPanel Text="@(workoutHistory.Workout.Name + " " + workoutHistory.Duration)">
                 <MudTable Items="@workoutHistory.ExerciseHistories" Hover="true" Breakpoint="Breakpoint.Sm" LoadingProgressColor="Color.Info" >
                     <HeaderContent>
                         <MudTh>Exercise Name</MudTh>

@@ -15,37 +15,65 @@
     }
 }
 
-
-function getFullScreenElement() {
-    return document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement;
-}
-
-function toggleFullScreen() {
-
-    if (getFullScreenElement()) {
-        document.exitFullscreen();
-    } else {
-        document.getElementById("overlay").requestFullscreen().catch(console.log);
-    }
-}
-
-
-const keypointsByExerciseName = [
-    { exerciseName: "Squat", pcsForValidation: [3, 5, 8, 10], pcsForCount: [10,11], angle: [30, 60] },
-    { exerciseName: "Push Up", pcsForValidation: [1, 2, 3, 4], pcsForCount: [1, 2], angle: [30, 60] },
-    { exerciseName: "Pull Up", pcsForValidation: [1, 2, 3, 4], pcsForCount: [1, 2], angle: [30, 60] },
-    { exerciseName:"Crunches", pcsForValidation: [1, 2, 3, 4], pcsForCount: [1, 2], angle: [30, 60] },
+const exercisesWithDetails = [
+    {
+        exerciseName: "Squat",
+        anglePointsForPosture: [4, 5, 6, 7],
+        anglePointsForReps: [6, 7],
+        targetMinAnglesForPosture: [30, 60, 30, 60],
+        targetMaxAnglesForPosture: [30, 60, 30, 60],
+        targetMinAnglesForReps: [30, 60],
+        targetMaxAnglesForReps: [30, 60]
+    },
+    {
+        exerciseName: "Push Up",
+        anglePointsForPosture: [2, 3, 4, 5, 6, 7],
+        anglePointsForReps: [0, 1],
+        targetMinAnglesForPosture: [10, 10, 150, 150, 150, 150],
+        targetMaxAnglesForPosture: [50, 50, 150, 150, 150, 150],
+        targetMinAnglesForReps: [50, 50],
+        targetMaxAnglesForReps: [120, 120]
+    },
+    {
+        exerciseName: "Pull Up",
+        anglePointsForPosture: [2, 3],
+        anglePointsForReps: [0, 1, 2, 3],
+        targetMinAnglesForPosture: [30, 60],
+        targetMaxAnglesForPosture: [30, 60],
+        targetMinAnglesForReps: [30, 60],
+        targetMaxAnglesForReps: [30, 60]
+    },
+    {
+        exerciseName: "Crunches",
+        anglePointsForPosture: [4, 5],
+        anglePointsForReps: [4, 5],
+        targetMinAnglesForPosture: [30, 60],
+        targetMaxAnglesForPosture: [30, 60],
+        targetMinAnglesForReps: [30, 60],
+        targetMaxAnglesForReps: [30, 60]
+    },
 ];
+
+let angles = [
+    { id: 0, p1: 0, p2: 0, p3: 0, angleName: "leftElbow", angleValue: 0 },
+    { id: 1, p1: 0, p2: 0, p3: 0, angleName: "rightElbow", angleValue: 0 },
+    { id: 2, p1: 0, p2: 0, p3: 0, angleName: "leftShoulder", angleValue: 0 },
+    { id: 3, p1: 0, p2: 0, p3: 0, angleName: "rightShoulder", angleValue: 0 },
+    { id: 4, p1: 0, p2: 0, p3: 0, angleName: "leftHip", angleValue: 0 },
+    { id: 5, p1: 0, p2: 0, p3: 0, angleName: "rightHip", angleValue: 0 },
+    { id: 6, p1: 0, p2: 0, p3: 0, angleName: "leftKnee", angleValue: 0 },
+    { id: 7, p1: 0, p2: 0, p3: 0, angleName: "rightKnee", angleValue: 0 },
+]
 
 
 async function estimatePose(exerciseName) {
     setupCamera();
     document.getElementById("overlay").requestFullscreen().catch(console.log);
-    const exercise = keypointsByExerciseName.find(x => x.exerciseName === exerciseName);
+    const exercise = exercisesWithDetails.find(x => x.exerciseName === exerciseName);
     const video = document.getElementById("video");
     const canvas = document.getElementById('overlay');
     const ctx = canvas.getContext('2d');
-    detector = await createDetector(); 
+    detector = await createDetector();
 
     async function createDetector() {
         return await poseDetection.createDetector(poseDetection.SupportedModels.MoveNet);
@@ -53,31 +81,41 @@ async function estimatePose(exerciseName) {
 
     async function poseDetectionFrame() {
         const result = await detector.estimatePoses(video);
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
         if (result != null && result.length > 0) {
-            drawKeypoints(result[0], 0.2);
-            drawPoseLines(result[0], exercise, 0.2);
-            findAngle(result[0], 0.2);
+            const keypoints = result[0].keypoints;
+            angles = [
+                { id: 0, p1: keypoints[5], p2: keypoints[7], p3: keypoints[9], angleName: "leftElbow", angleValue: 0 },
+                { id: 1, p1: keypoints[10], p2: keypoints[8], p3: keypoints[6], angleName: "rightElbow", angleValue: 0 },
+                { id: 2, p1: keypoints[7], p2: keypoints[5], p3: keypoints[11], angleName: "leftShoulder", angleValue: 0 },
+                { id: 3, p1: keypoints[12], p2: keypoints[6], p3: keypoints[8], angleName: "rightShoulder", angleValue: 0 },
+                { id: 4, p1: keypoints[5], p2: keypoints[11], p3: keypoints[13], angleName: "leftHip", angleValue: 0 },
+                { id: 5, p1: keypoints[6], p2: keypoints[12], p3: keypoints[14], angleName: "rightHip", angleValue: 0 },
+                { id: 6, p1: keypoints[11], p2: keypoints[13], p3: keypoints[15], angleName: "leftKnee", angleValue: 0 },
+                { id: 7, p1: keypoints[12], p2: keypoints[14], p3: keypoints[16], angleName: "rightKnee", angleValue: 0 },
+            ]
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            drawKeypoints(keypoints, 0.2);
+            drawPoseLines(keypoints, exercise, 0.2);
+            findAngle(0.2);
+            countReps(exercise,0.01);
+            checkPosture(exercise, angles, 0.2);
         }
         requestAnimationFrame(poseDetectionFrame);
-        return result;
     }
 
     poseDetectionFrame();
-
-    
 }
 
-function quitExercise() {   
+function quitExercise() {
     stopVideo();
     document.exitFullscreen();
 }
 
 
-function drawKeypoints(result, minPoseScore) {
+function drawKeypoints(keypoints, minPoseScore) {
     const ctx = document.getElementById('overlay').getContext('2d');
-    result.keypoints.forEach(keypoint => {
+    keypoints.forEach(keypoint => {
         if (keypoint.score >= minPoseScore) {
             ctx.beginPath();
             ctx.arc(keypoint.x, keypoint.y, 3, 0, 2 * Math.PI);
@@ -87,12 +125,11 @@ function drawKeypoints(result, minPoseScore) {
     });
 }
 
-function drawPoseLines(result, exercise, minPoseScore) {
+function drawPoseLines(keypoints, exercise, minPoseScore) {
     const ctx = document.getElementById('overlay').getContext('2d');
     ctx.strokeStyle = 'blue';
     ctx.lineWidth = 2;
 
-    const keypoints = result.keypoints;
     const poseConnections = [
         { id: 0, from: keypoints[5], to: keypoints[7] }, //sol omuzdan sol dirseğe
         { id: 1, from: keypoints[5], to: keypoints[6] }, // sol omuzdan sağ omuza
@@ -120,21 +157,10 @@ function drawPoseLines(result, exercise, minPoseScore) {
     });
 }
 
-function findAngle(result, minPoseScore) {
+function findAngle(minPoseScore) {
     const ctx = document.getElementById('overlay').getContext('2d');
-    const keypoints = result.keypoints;
-    const poseConnections = [
-        { p1: keypoints[5], p2: keypoints[7], p3: keypoints[9] }, //sol dirsek açısı
-        { p1: keypoints[10], p2: keypoints[8], p3: keypoints[6] }, // sağ dirsek açısı
-        { p1: keypoints[7], p2: keypoints[5], p3: keypoints[11] }, //sol omuz açısı
-        { p1: keypoints[12], p2: keypoints[6], p3: keypoints[8] }, // sağ omuz açısı
-        { p1: keypoints[5], p2: keypoints[11], p3: keypoints[13] }, //sol kalça açısı
-        { p1: keypoints[6], p2: keypoints[12], p3: keypoints[14] }, //sağ kalça açısı
-        { p1: keypoints[11], p2: keypoints[13], p3: keypoints[15] }, //sol diz açısı
-        { p1: keypoints[12], p2: keypoints[14], p3: keypoints[16] }, //sağ diz açısı
-    ];
 
-    poseConnections.forEach(connection => {
+    angles.forEach(connection => {
         const p1 = connection.p1;
         const p2 = connection.p2;
         const p3 = connection.p3;
@@ -146,6 +172,7 @@ function findAngle(result, minPoseScore) {
                 theta += 360;
             if (theta > 180)
                 theta = 360 - theta;
+            connection.angleValue = theta;
             ctx.font = "16px serif";
             ctx.fillText(theta, p2.x, p2.y);
         }
@@ -153,6 +180,57 @@ function findAngle(result, minPoseScore) {
 
 }
 
+function countReps(exercise, minPoseScore) {
+    const ctx = document.getElementById('overlay').getContext('2d');
+    var count = 0;
+    var dir = 0;
+
+    exercise.anglePointsForReps.forEach((angle, index) => {
+        if (angles[angle].p1.score > minPoseScore && angles[angle].p2.score > minPoseScore && angles[angle].p3.score > minPoseScore) {
+            if (angles[angle].angleValue == exercise.targetMaxAnglesForReps[index]) {
+                if (dir == 0) {
+                    count += 0.5;
+                    dir = 1;    
+                }
+            }
+            if (angles[angle].angleValue == exercise.targetMinAnglesForReps[index]) {
+                if (dir == 1) {
+                    count += 0.5;
+                    dir = 0;
+                }
+            }
+            ctx.font = "16px serif";
+            ctx.fillText(count.toString(), 10,10);
+        }
+    });
+}
+
+function checkPosture(exercise, angles, minPoseScore) {
+    const ctx = document.getElementById('overlay').getContext('2d');
+
+    exercise.anglePointsForPosture.forEach((angle, index) => {
+        if (angles[angle].p1.score > minPoseScore && angles[angle].p2.score > minPoseScore && angles[angle].p3.score > minPoseScore) {
+            if (angles[angle].angleValue < exercise.targetMinAnglesForPosture[index] || angles[angle].angleValue > exercise.targetMaxAnglesForPosture[index]) {
+                ctx.beginPath();
+                ctx.moveTo(angles[angle].p1.x, angles[angle].p1.y);
+                ctx.lineTo(angles[angle].p2.x, angles[angle].p2.y);
+                ctx.moveTo(angles[angle].p2.x, angles[angle].p2.y);
+                ctx.lineTo(angles[angle].p3.x, angles[angle].p3.y);
+                ctx.strokeStyle = 'red';
+                ctx.stroke();
+            }
+            else {
+                ctx.beginPath();
+                ctx.moveTo(angles[angle].p1.x, angles[angle].p1.y);
+                ctx.lineTo(angles[angle].p2.x, angles[angle].p2.y);
+                ctx.moveTo(angles[angle].p2.x, angles[angle].p2.y);
+                ctx.lineTo(angles[angle].p3.x, angles[angle].p3.y);
+                ctx.strokeStyle = 'green';
+                ctx.stroke();
+            }
+        }
+    });
+}
 
 function stopVideo() {
     const video = document.getElementById("video");
