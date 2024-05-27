@@ -31,8 +31,8 @@ const exercisesWithDetails = [
         anglePointsForReps: [0, 1],
         targetMinAnglesForPosture: [10, 10, 150, 150, 150, 150],
         targetMaxAnglesForPosture: [50, 50, 150, 150, 150, 150],
-        targetMinAnglesForReps: [50, 50],
-        targetMaxAnglesForReps: [120, 120]
+        targetMinAnglesForReps: [20, 20],
+        targetMaxAnglesForReps: [160, 160]
     },
     {
         exerciseName: "Pull Up",
@@ -64,6 +64,9 @@ let angles = [
     { id: 6, p1: 0, p2: 0, p3: 0, angleName: "leftKnee", angleValue: 0 },
     { id: 7, p1: 0, p2: 0, p3: 0, angleName: "rightKnee", angleValue: 0 },
 ]
+
+let count = 0;
+let dir = 0;
 
 
 async function estimatePose(exerciseName) {
@@ -108,6 +111,8 @@ async function estimatePose(exerciseName) {
 }
 
 function quitExercise() {
+    count = 0;
+    dir = 0;
     stopVideo();
     document.exitFullscreen();
 }
@@ -182,8 +187,6 @@ function findAngle(minPoseScore) {
 
 function countReps(exercise, minPoseScore) {
     const ctx = document.getElementById('overlay').getContext('2d');
-    var count = 0;
-    var dir = 0;
 
     exercise.anglePointsForReps.forEach((angle, index) => {
         if (angles[angle].p1.score > minPoseScore && angles[angle].p2.score > minPoseScore && angles[angle].p3.score > minPoseScore) {
@@ -199,8 +202,8 @@ function countReps(exercise, minPoseScore) {
                     dir = 0;
                 }
             }
-            ctx.font = "16px serif";
-            ctx.fillText(count.toString(), 10,10);
+            ctx.font = "24px serif";
+            ctx.fillText(count.toString(), 50,50);
         }
     });
 }
