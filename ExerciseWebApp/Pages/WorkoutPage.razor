@@ -14,32 +14,25 @@
         <MudItem xs="2" Class="d-flex align-center justify-center">
         </MudItem>
         <MudItem xs="8">
-            @foreach (var exercise in Workout.Exercises)
-            {
-                <MudTooltip ShowOnHover=false ShowOnFocus=true Color="Color.Transparent">
-                    <ChildContent>
-                        <MudButton>
-                            <MudPaper Elevation="4" Class="d-flex pa-4 overflow-x-hidden" Style="@(exercise.IsDone ? $"background:{Colors.Green.Lighten3};" : $"background:{Colors.Grey.Darken3}")">
-                                <MudText Class="d-flex align-center">
-                                    <div hidden="@(!exercise.IsDone)">
-                                        <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Color="Color.Success" Class="mr-3"></MudIcon>
-                                    </div>
-                                    @exercise.Name
-                                </MudText>
-                            </MudPaper>
-                        </MudButton>
-                    </ChildContent>
-                    <TooltipContent>
-                        <MudGrid Justify="Justify.Center">
-                            <MudItem xs="4" Class="grey rounded">
-                                <a href="@exercise.VideoLink" target="_blank">@exercise.VideoLink</a>
-                                <MudText Typo="Typo.body1">@exercise.Description</MudText>
-                                <MudIcon Icon="@Icons.Material.Filled.Star" />
-                            </MudItem>
-                        </MudGrid>
-                    </TooltipContent>
-                </MudTooltip>
-            }
+            <MudGrid>
+                @foreach (var exercise in Workout.Exercises)
+                {
+                    <MudItem xs="12">
+                        <MudPaper Elevation="4" Class="d-flex align-center justify-center mud-width-full py-2 overflow-x-auto" Style="@(exercise.IsDone ? $"background:{Colors.Green.Lighten3};" : $"background:{Colors.Grey.Darken3}")">
+                            <MudText Class="d-flex align-center">
+                                <div hidden="@(!exercise.IsDone)">
+                                    <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Color="Color.Success" Class="mr-3"></MudIcon>
+                                </div>
+                                <MudButton OnClick="() => {}">
+                                    <MudStack Justify="Justify.Center">
+                                        <h3>@exercise.Name</h3>
+                                    </MudStack>
+                                </MudButton>
+                            </MudText>
+                        </MudPaper>
+                    </MudItem>
+                }
+            </MudGrid>
         </MudItem>
         <MudItem xs="2" Class="d-flex align-center justify-center">
         </MudItem>

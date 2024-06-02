@@ -8,7 +8,7 @@
         @foreach (var workout in Workouts)
         {
             <MudItem md="6" sm="12" xs="12">
-                <MudPaper Class="d-flex align-center justify-space-between mud-width-full py-2 overflow-x-hidden" Elevation="5">
+                <MudPaper Class="d-flex align-center justify-space-between mud-width-full py-2 overflow-x-auto" Elevation="5">
                     <MudButton OnClick="() => NavigateToWorkoutPage(workout.Id)">
                         <MudStack Justify="Justify.FlexStart">
                             <h3>@workout.Name</h3>

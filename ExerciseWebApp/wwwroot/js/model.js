@@ -21,7 +21,7 @@ const exercisesWithDetails = [
         anglePointsForPosture: [4, 5, 6, 7],
         anglePointsForReps: [6, 7],
         targetMinAnglesForPosture: [30, 60, 30, 60],
-        targetMaxAnglesForPosture: [30, 60, 30, 60],
+        targetMaxAnglesForPosture: [150, 60, 30, 60],
         targetMinAnglesForReps: [30, 60],
         targetMaxAnglesForReps: [30, 60]
     },
