@@ -47,6 +47,7 @@
     {
         _loading = true;
         WorkoutHistories = await _local.GetAllWorkoutHistoriesAsync();
+        WorkoutHistories = WorkoutHistories.OrderByDescending(x => x.Id).ToList();
         _loading = false;
     }
 
